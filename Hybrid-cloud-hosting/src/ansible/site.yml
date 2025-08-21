@@ -1,0 +1,30 @@
+---
+- name: Configure cPanel/WHM and WordPress
+  hosts: webnodes
+  become: yes
+  vars:
+    wp_db_host: "<supabase_host>"
+    wp_db_user: "<supabase_user>"
+    wp_db_pass: "<supabase_pass>"
+    wp_db_name: "<wp_db_name>"
+  tasks:
+    - name: Install Nginx and PHP-FPM
+      apt:
+        name:
+          - nginx
+          - php-fpm
+        state: present
+    - name: Harden server security
+      ufw:
+        rule: allow
+        name: "Nginx Full"
+    - name: Download and configure WordPress
+      shell: |
+        wget https://wordpress.org/latest.tar.gz
+        tar -xzf latest.tar.gz
+        cp -R wordpress/* /var/www/html/
+        chown -R www-data:www-data /var/www/html/
+    - name: Configure wp-config.php for Supabase
+      template:
+        src: wp-config.php.j2
+        dest: /var/www/html/wp-config.php

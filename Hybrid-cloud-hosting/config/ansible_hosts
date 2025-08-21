@@ -1,0 +1,4 @@
+[webnodes]
+# List your provisioned droplet IPs here
+192.168.1.10
+192.168.1.11
